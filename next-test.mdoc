@@ -4,7 +4,8 @@ description: Content from the official Markdoc docs
 author: John Doe
 ---
 
-# {% $markdoc.frontmatter.title %} 
+# {% $markdoc.frontmatter.title %}
+
 Author: {% $markdoc.frontmatter.author %}
 
 With Markdoc, it's easy to add functionality you'd commonly associate with documentation sites. The examples below cover loops, syntax highlighting, tabs, and more.
@@ -16,23 +17,23 @@ If you're looking for other sample code, check out our collection of [example re
 Markdoc does not support writing loops directly in documents. If you need to loop through content, do so in a custom [Node](/docs/nodes) or [Tag](/docs/tags) `transform` function or in a custom [React component](/docs/render#react).
 
 ```js
-import { Tag } from '@markdoc/markdoc';
+import { Tag } from "@markdoc/markdoc";
 
 export const group = {
-	render: 'Group',
+	render: "Group",
 	attributes: {
-		items: { type: Array }
+		items: { type: Array },
 	},
 	transform(node, config) {
 		const attributes = node.transformAttributes(config);
 		const children = node.transformChildren(config);
 
 		for (const item of attributes.items) {
-		/* Do something with each item */
+			/* Do something with each item */
 		}
 
-		return new Tag('Group', attributes, children);
-	}
+		return new Tag("Group", attributes, children);
+	},
 };
 ```
 
@@ -51,38 +52,38 @@ You can hook up syntax highlighting for code blocks by creating a custom `fence`
 ```js
 // [Source example](https://github.com/markdoc/docs/blob/main/components/Code.js)
 
-import 'prismjs';
-import 'prismjs/themes/prism.css';
+import "prismjs";
+import "prismjs/themes/prism.css";
 
-import Prism from 'react-prism';
+import Prism from "react-prism";
 
 export function Fence({ children, language }) {
 	return (
 		<Prism key={language} component="pre" className={`language-${language}`}>
-		{children}
+			{children}
 		</Prism>
 	);
 }
 
 const fence = {
-	render: 'Fence',
+	render: "Fence",
 	attributes: {
 		language: {
-			type: String
-		}
-	}
+			type: String,
+		},
+	},
 };
 
 const content = Markdoc.transform(ast, {
 	nodes: {
-		fence
-	}
+		fence,
+	},
 });
 
 Markdoc.renderers.react(content, React, {
 	components: {
-		Fence
-	}
+		Fence,
+	},
 });
 ```
 
@@ -91,7 +92,7 @@ Markdoc.renderers.react(content, React, {
 You can create your own `switch`/`case` semantics with custom Markdoc tags.
 
 ```js
-import { transformer } from '@markdoc/markdoc';
+import { transformer } from "@markdoc/markdoc";
 
 /** @type {import('@markdoc/markdoc').Config} */
 const config = {
@@ -102,16 +103,16 @@ const config = {
 				const attributes = node.transformAttributes(config);
 
 				const child = node.children.find(
-				(child) => child.attributes.primary === attributes.primary
+					(child) => child.attributes.primary === attributes.primary
 				);
 
 				return child ? transformer.node(child, config) : [];
-			}
+			},
 		},
 		case: {
-			attributes: { primary: { render: false } }
-		}
-	}
+			attributes: { primary: { render: false } },
+		},
+	},
 };
 ```
 
@@ -143,27 +144,27 @@ To create a table of contents, first collect all headings from the page content:
 // [Source example](https://github.com/markdoc/docs/blob/bae62d06109e3e699778fe901c8015d41b1c7c9f/pages/_app.js#L58-L79)
 
 function collectHeadings(node, sections = []) {
-  if (node) {
-    // Match all h1, h2, h3… tags
-    if (node.name.match(/h\d/)) {
-      const title = node.children[0];
+	if (node) {
+		// Match all h1, h2, h3… tags
+		if (node.name.match(/h\d/)) {
+			const title = node.children[0];
 
-      if (typeof title === 'string') {
-        sections.push({
-          ...node.attributes,
-          title
-        });
-      }
-    }
+			if (typeof title === "string") {
+				sections.push({
+					...node.attributes,
+					title,
+				});
+			}
+		}
 
-    if (node.children) {
-      for (const child of node.children) {
-        collectHeadings(child, sections);
-      }
-    }
-  }
+		if (node.children) {
+			for (const child of node.children) {
+				collectHeadings(child, sections);
+			}
+		}
+	}
 
-  return sections;
+	return sections;
 }
 
 const content = Markdoc.transform(ast);
@@ -176,19 +177,19 @@ Then, render the headings in a list:
 // [Source example](https://github.com/markdoc/docs/blob/main/components/Shell/TableOfContents.js)
 
 function TableOfContents({ headings }) {
-  const items = headings.filter((item) => [2, 3].includes(item.level));
+	const items = headings.filter((item) => [2, 3].includes(item.level));
 
-  return (
-    <nav>
-      <ul>
-        {items.map((item) => (
-          <li key={item.title}>
-            <a href={`#${item.id}`}>{item.title}</a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  );
+	return (
+		<nav>
+			<ul>
+				{items.map((item) => (
+					<li key={item.title}>
+						<a href={`#${item.id}`}>{item.title}</a>
+					</li>
+				))}
+			</ul>
+		</nav>
+	);
 }
 ```
 
@@ -207,36 +208,36 @@ Finally, add IDs to the headings using ID [annotations](/docs/syntax#annotations
 First, create the Markdoc tags
 
 ```js
-import { Tag } from '@markdoc/markdoc';
+import { Tag } from "@markdoc/markdoc";
 
 const tabs = {
-	render: 'Tabs',
+	render: "Tabs",
 	attributes: {},
 	transform(node, config) {
 		const labels = node
-		.transformChildren(config)
-		.filter((child) => child && child.name === 'Tab')
-		.map((tab) => (typeof tab === 'object' ? tab.attributes.label : null));
+			.transformChildren(config)
+			.filter((child) => child && child.name === "Tab")
+			.map((tab) => (typeof tab === "object" ? tab.attributes.label : null));
 
 		return new Tag(this.render, { labels }, node.transformChildren(config));
-	}
+	},
 };
 
 const tab = {
-	render: 'Tab',
+	render: "Tab",
 	attributes: {
 		label: {
-		type: String
-		}
-	}
+			type: String,
+		},
+	},
 };
 
 /** @type {import('@markdoc/markdoc').Config} */
 const config = {
 	tags: {
 		tabs,
-		tab
-	}
+		tab,
+	},
 };
 ```
 
@@ -287,8 +288,8 @@ export function Tabs({ labels, children }) {
 ```js
 // components/Tab.js
 
-import React from 'react';
-import { TabContext } from './Tabs';
+import React from "react";
+import { TabContext } from "./Tabs";
 
 export function Tab({ label, children }) {
 	const currentTab = React.useContext(TabContext);
